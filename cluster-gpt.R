@@ -1,6 +1,7 @@
 # ライブラリ読み込み
 library(foreign)   # DBFファイル読み込み
 library(dplyr)     # データ操作
+library(ggplot2)   # 可視化
 library(leaflet)   # OpenStreetMap用
 
 # householdsデータ読み込み
@@ -11,14 +12,19 @@ coords <- households %>% select(longitude, latitude)
 
 # K-meansクラスタリング（営業所10個想定）
 set.seed(123)
-kmeans_result <- kmeans(coords, centers = 9, nstart = 25)
+kmeans_result <- kmeans(coords, centers = 10, nstart = 25)
 
 # クラスタ番号を元データに追加
 households$cluster <- kmeans_result$cluster
+write.csv(households, "C:/Users/inyt1/Documents/sakai-exp/output/clusters.csv", row.names = FALSE)
+print(households)
 
-# セントロイドを取得
+# 重心データフレーム作成
 centroids <- as.data.frame(kmeans_result$centers)
-centroids$cluster <- 1:nrow(centroids)  # セントロイドにクラスタ番号を追加
+colnames(centroids) <- c("longitude", "latitude")
+print(centroids)
+write.csv(centroids, "C:/Users/inyt1/Documents/sakai-exp/output/centroids.csv", row.names = FALSE)
+
 
 # 色のパレットをクラスタごとに設定
 pal <- colorFactor(palette = "Set1", domain = households$cluster)
@@ -31,11 +37,12 @@ leaflet(households) %>%
     color = ~pal(cluster),  # クラスタ番号で色分け
     radius = 5, fillOpacity = 0.7, stroke = FALSE
   ) %>%
+  # 重心を大きなマーカーで追加
   addCircleMarkers(
-    data = centroids, 
-    ~longitude, ~latitude, 
-    color = "black",  # セントロイドを黒色で表示
-    radius = 8, fillOpacity = 1, stroke = TRUE, weight = 2
+    data = centroids,
+    lng = ~longitude, lat = ~latitude,
+    radius = 10, color = "black", fillColor = "yellow", fillOpacity = 1,
+    label = ~paste("Center", cluster)
   ) %>%
   addLegend(
     "bottomright", pal = pal, 
