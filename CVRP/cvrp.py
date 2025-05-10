@@ -9,14 +9,20 @@ import numpy as np
 from scipy.spatial import distance_matrix
 
 cluster_id=1
+df_center = pd.read_csv("../output/centers.csv")
+center = df_center[['x', 'y']].iloc[cluster_id - 1].values  
+
 df = pd.read_csv(f"../output/cluster{cluster_id:02d}.csv")
-locations = df[['x', 'y']].values
-
-# print(locations)
-
+cluster_points = df[['x', 'y']].values
+locations = np.vstack([center.reshape(1, 2), cluster_points])
 points = np.array(locations)
+
+center = df_center[['longitude', 'latitude']].iloc[cluster_id - 1].values  
+cluster_points = df[['longitude', 'latitude']].values
+locations_lon_lat = np.vstack([center.reshape(1, 2), cluster_points])
+
 distance_matrix = distance_matrix(points, points).astype(int)
-num_vehicles = math.ceil(len(locations) / 50)
+num_vehicles = math.ceil(len(locations - 1) / 50)
 
 def create_data_model():
     data = {}
@@ -55,15 +61,7 @@ def print_solution(data, manager, routing, solution):
     print(f"Total load of all routes: {total_load}")
 
 def create_geojson(data, manager, routing, solution):
-    coordinates = []  
     features = []
-    
-    # Generate other points in a circle around the depot
-    for i in range(0, len(data["distance_matrix"])):
-        coord = df[['longitude','latitude']].values[i].tolist()
-        coordinates.append(coord)
-    
-    # Add depot feature
     features.append({
         "type": "Feature",
         "properties": {
@@ -74,13 +72,11 @@ def create_geojson(data, manager, routing, solution):
         },
         "geometry": {
             "type": "Point",
-            "coordinates": coordinates[0]
+            "coordinates": locations_lon_lat[0].tolist()
         }
     })
     
-    # Add customer features
     for i in range(1,len(data["distance_matrix"])):
-        coord = coordinates[i]
         features.append({
             "type": "Feature",
             "properties": {
@@ -91,36 +87,31 @@ def create_geojson(data, manager, routing, solution):
             },
             "geometry": {
                 "type": "Point",
-                "coordinates": coordinates[i]
+                "coordinates": locations_lon_lat[i].tolist()
             }
         })
     
-    # Add route features
     colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", 
               "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
     
     for vehicle_id in range(data["num_vehicles"]):
         index = routing.Start(vehicle_id)
-        route_coords = []
+        route = []
         
         while not routing.IsEnd(index):
             node_index = manager.IndexToNode(index)
-            # coord = coordinates[node_index]
-            coord = df[['longitude','latitude']].values[node_index].tolist()
-            route_coords.append([coord[0], coord[1]])
-            previous_index = index
+            if node_index < len(locations):
+                route.append(locations_lon_lat[node_index].tolist())
             index = solution.Value(routing.NextVar(index))
-        
-        # Add the last node
-        node_index = manager.IndexToNode(index)
-        coord = df[['longitude','latitude']].values[node_index].tolist()
-        route_coords.append([coord[0], coord[1]])
 
-        # Add route as LineString feature
+        node_index = manager.IndexToNode(index)
+        if node_index < len(locations):
+            route.append(locations_lon_lat[node_index].tolist())
+
         features.append({
             "type": "Feature",
             "properties": {
-                "stroke": colors[cluster_id],
+                "stroke": colors[cluster_id - 1],
                 "stroke-width": 2,
                 "stroke-opacity": 1,
                 "vehicle": vehicle_id,
@@ -128,7 +119,7 @@ def create_geojson(data, manager, routing, solution):
             },
             "geometry": {
                 "type": "LineString",
-                "coordinates": route_coords
+                "coordinates": route
             }
         })
     
@@ -142,22 +133,18 @@ def create_geojson(data, manager, routing, solution):
 def save_geojson(geojson, filename=f"../geojson/cluster{cluster_id:02d}.geojson"):
     with open(filename, "w") as f:
         json.dump(geojson, f, indent=2)
-    print(f"GeoJSON saved to {filename}")
+    print(f"✅GeoJSON saved to {filename}")
 
 def main():
     """Solve the CVRP problem and save GeoJSON."""
-    # Instantiate the data problem.
     data = create_data_model()
 
-    # Create the routing index manager.
     manager = pywrapcp.RoutingIndexManager(
         len(data["distance_matrix"]), data["num_vehicles"], data["depot"]
     )
 
-    # Create Routing Model.
     routing = pywrapcp.RoutingModel(manager)
 
-    # Create and register a transit callback.
     def distance_callback(from_index, to_index):
         """Returns the distance between the two nodes."""
         from_node = manager.IndexToNode(from_index)
@@ -167,7 +154,6 @@ def main():
     transit_callback_index = routing.RegisterTransitCallback(distance_callback)
     routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
 
-    # Add Capacity constraint.
     def demand_callback(from_index):
         """Returns the demand of the node."""
         from_node = manager.IndexToNode(from_index)
@@ -182,7 +168,6 @@ def main():
         "Capacity",
     )
 
-    # Setting first solution heuristic.
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
@@ -192,16 +177,14 @@ def main():
     )
     search_parameters.time_limit.FromSeconds(1)
 
-    # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
 
-    # Print solution and save GeoJSON
     if solution:
         print_solution(data, manager, routing, solution)
         geojson = create_geojson(data, manager, routing, solution)
         save_geojson(geojson)
     else:
-        print("No solution found!")
+        print("❌No solution found.")
 
 if __name__ == "__main__":
     main()
