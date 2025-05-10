@@ -12372,7 +12372,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 0,
@@ -12563,7 +12563,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 1,
@@ -12786,7 +12786,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 2,
@@ -13001,7 +13001,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 3,
@@ -13224,7 +13224,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 4,
@@ -13391,7 +13391,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 5,
@@ -13598,7 +13598,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 6,
@@ -13821,7 +13821,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 7,
@@ -14044,7 +14044,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 8,
@@ -14267,7 +14267,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 9,
@@ -14490,7 +14490,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 10,
@@ -14713,7 +14713,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 11,
@@ -14936,7 +14936,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 12,
@@ -15159,7 +15159,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 13,
@@ -15382,7 +15382,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 14,
@@ -15605,7 +15605,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#7f7f7f",
+        "stroke": "#e377c2",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 15,

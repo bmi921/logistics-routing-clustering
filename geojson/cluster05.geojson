@@ -4340,7 +4340,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#8c564b",
+        "stroke": "#9467bd",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 0,
@@ -4491,7 +4491,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#8c564b",
+        "stroke": "#9467bd",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 1,
@@ -4714,7 +4714,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#8c564b",
+        "stroke": "#9467bd",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 2,
@@ -4917,7 +4917,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#8c564b",
+        "stroke": "#9467bd",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 3,
@@ -5140,7 +5140,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#8c564b",
+        "stroke": "#9467bd",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 4,
@@ -5363,7 +5363,7 @@
     {
       "type": "Feature",
       "properties": {
-        "stroke": "#8c564b",
+        "stroke": "#9467bd",
         "stroke-width": 2,
         "stroke-opacity": 1,
         "vehicle": 5,
@@ -5493,16 +5493,16 @@
             35.7998350477844
           ],
           [
+            139.901246133657,
+            35.8111803320226
+          ],
+          [
             139.914887699017,
             35.8142260575264
           ],
           [
             139.911549380834,
             35.8147084865766
-          ],
-          [
-            139.901246133657,
-            35.8111803320226
           ],
           [
             139.904303154409,
