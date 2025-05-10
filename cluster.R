@@ -17,8 +17,24 @@ kmeans_result <- kmeans(coords, centers = 10, nstart = 25)
 # クラスタ番号を元データに追加
 households$cluster <- kmeans_result$cluster
 
+# 重心を表示し、csv形式で保存する
+centers <- as.data.frame(kmeans_result$centers)
+colnames(centers) <- c("longitude", "latitude")
+print(centers)
+write.csv(centers, "C:/Users/inyt1/Documents/sakai-exp/output/centers.csv", row.names = FALSE)
+
 # 色のパレットをクラスタごとに設定
 pal <- colorFactor(palette = "Set1", domain = households$cluster)
+
+# クラスターごとにcsvファイルに保存する
+for (i in 1:10) {
+  cluster_data <- households %>% filter(cluster == i)
+  file_name <- sprintf("cluster%02d.csv", i)  # 2桁ゼロ埋め (01, 02,...10)
+  write.csv(cluster_data, 
+            file = paste0("C:/Users/inyt1/Documents/sakai-exp/output/", file_name),
+            row.names = FALSE,
+            fileEncoding = "UTF-8")
+}
 
 # --- OpenStreetMapでプロット ---
 leaflet(households) %>%
@@ -27,6 +43,16 @@ leaflet(households) %>%
     ~longitude, ~latitude, 
     color = ~pal(cluster),  # クラスタ番号で色分け
     radius = 5, fillOpacity = 0.7, stroke = FALSE
+  ) %>%
+  # 重心（赤い円マーカー）
+  addCircleMarkers(
+    data = centers,
+    lng = ~longitude, 
+    lat = ~latitude,
+    color = "black",
+    radius = 8,
+    fillOpacity = 1,
+    stroke = FALSE
   ) %>%
   addLegend(
     "bottomright", pal = pal, 
