@@ -1,14 +1,19 @@
 # 🏢 営業所建設計画プロジェクト
+5000世帯の東京の顧客にラストワンマイルで製品を届ける必要のある事業で、あなたは営業所の立地計画を担当することになった。
+合理性のある理由で営業所の位置を計画する。
+- 世帯をRでクラスター分析
+- 巡回セールスマン問題としてORtoolsで局所最適化(最適解ではない)
+
 
 <div align="center">
 
 [![Notion Badge](https://img.shields.io/badge/Notion-詳細ドキュメント-000000?style=for-the-badge&logo=notion)](https://silent-felidae-1f6.notion.site/4-6-1e3d103bdc84809d948feaa3cd5e4bbd)
-[![GitHub Pages Badge](https://img.shields.io/badge/GitHub_Pages-結果ビューア-222222?style=for-the-badge&logo=github)](https://bmi921.github.io/)
+[![GitHub Pages Badge](https://img.shields.io/badge/GitHub_Pages-結果ビューア-222222?style=for-the-badge&logo=github)](https://bmi921.github.io/cvrp.html)
 
 </div>
 
 
-## 🛠️ 技術スタック
+## 🛠️ 技術
 
 <div align="center">
 
@@ -21,17 +26,18 @@
 
 </div>
 
-## 🚀 クイックスタート
-
-```bash
-git clone https://github.com/bmi921/logistics-cluster-cvrp.git
-cd logistics-cluster-cvrp
+## 🚀使い方
 ```
+git clone https://github.com/bmi921/logistics-cluster-cvrp
+cd ./logistics-cluster-cvrp
+Rscript clsuter.r
+python CVRP/calc_xy.py
+python CVRP/cvrp.py
+```
+cluster.r → calc_xy.py → cvrp.py　の順で実行してください。中間生成ファイルのためです。
 
-
-## 📂 プロジェクト構造
-
-```tree
+## 📂 ディレクトリ構成
+```
 logistics-cluster-cvrp/
 ├── 📂 data/          # 入力データセット
 ├── 📂 geojson   # keplerの表示のため 
