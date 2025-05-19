@@ -4,8 +4,11 @@ library(dplyr)     # データ操作
 library(ggplot2)   # 可視化
 library(leaflet)   # OpenStreetMap用
 
+# 使用するディレクトリ
+main_dir = '/Users/inyt113/Desktop/test/logistics-cluster-cvrp'
+
 # householdsデータ読み込み
-households <- read.dbf("C:/Users/inyt1/Documents/sakai-exp/data/household5000.dbf", as.is = TRUE)
+households <- read.dbf( file.path(main_dir , "/data/household5000.dbf"), as.is = TRUE)
 
 # 緯度・経度だけ抜き出し
 coords <- households %>% select(longitude, latitude)
@@ -21,7 +24,7 @@ households$cluster <- kmeans_result$cluster
 centers <- as.data.frame(kmeans_result$centers)
 colnames(centers) <- c("longitude", "latitude")
 print(centers)
-write.csv(centers, "C:/Users/inyt1/Documents/sakai-exp/output/centers.csv", row.names = FALSE)
+write.csv(centers, file.path(main_dir , "/output/centers.csv"), row.names = FALSE)
 
 # 色のパレットをクラスタごとに設定
 pal <- colorFactor(palette = "Set1", domain = households$cluster)
@@ -31,7 +34,7 @@ for (i in 1:10) {
   cluster_data <- households %>% filter(cluster == i)
   file_name <- sprintf("cluster%02d.csv", i)  # 2桁ゼロ埋め (01, 02,...10)
   write.csv(cluster_data, 
-            file = paste0("C:/Users/inyt1/Documents/sakai-exp/output/", file_name),
+            file = paste0(file.path(main_dir,"/output/"), file_name),
             row.names = FALSE,
             fileEncoding = "UTF-8")
 }
