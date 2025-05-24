@@ -1,6 +1,7 @@
 """Capacited Vehicles Routing Problem (CVRP)."""
 
 import math
+from matplotlib import pyplot as plt
 from ortools.constraint_solver import routing_enums_pb2
 from ortools.constraint_solver import pywrapcp
 import json
@@ -8,33 +9,37 @@ import pandas as pd
 import numpy as np
 from scipy.spatial import distance_matrix
 
-# クラスターidと何秒で解くか決める
-cluster_id=1
-limit_seconds = 1
+# クラスターid
+cluster_id = 7
+results_limit_seconds = []
+results_total_distance = []
+
 
 df_center = pd.read_csv("output/centers.csv")
-center = df_center[['x', 'y']].iloc[cluster_id - 1].values  
+center = df_center[["x", "y"]].iloc[cluster_id - 1].values
 
 df = pd.read_csv(f"output/cluster{cluster_id:02d}.csv")
-cluster_points = df[['x', 'y']].values
+cluster_points = df[["x", "y"]].values
 locations = np.vstack([center.reshape(1, 2), cluster_points])
 points = np.array(locations)
 
-center = df_center[['longitude', 'latitude']].iloc[cluster_id - 1].values  
-cluster_points = df[['longitude', 'latitude']].values
+center = df_center[["longitude", "latitude"]].iloc[cluster_id - 1].values
+cluster_points = df[["longitude", "latitude"]].values
 locations_lon_lat = np.vstack([center.reshape(1, 2), cluster_points])
 
 distance_matrix = distance_matrix(points, points).astype(int)
 num_vehicles = math.ceil(len(locations - 1) / 50)
 
+
 def create_data_model():
     data = {}
     data["distance_matrix"] = distance_matrix.tolist()
-    data["demands"] = [0] + [1] * (len(data["distance_matrix"]) - 1)  
+    data["demands"] = [0] + [1] * (len(data["distance_matrix"]) - 1)
     data["vehicle_capacities"] = [50] * num_vehicles
     data["num_vehicles"] = num_vehicles
     data["depot"] = 0
     return data
+
 
 def print_solution(data, manager, routing, solution):
     print(f"Objective: {solution.ObjectiveValue()}")
@@ -62,45 +67,58 @@ def print_solution(data, manager, routing, solution):
         total_load += route_load
     print(f"Total distance of all routes: {total_distance /1000}km")
     print(f"Total load of all routes: {total_load}")
+    results_total_distance.append(total_distance / 1000)
+
 
 def create_geojson(data, manager, routing, solution):
     features = []
-    features.append({
-        "type": "Feature",
-        "properties": {
-            "marker-color": "#FF0000",
-            "marker-size": "large",
-            "marker-symbol": "warehouse",
-            "name": f"Depot {cluster_id}",
-        },
-        "geometry": {
-            "type": "Point",
-            "coordinates": locations_lon_lat[0].tolist()
-        }
-    })
-    
-    for i in range(1,len(data["distance_matrix"])):
-        features.append({
+    features.append(
+        {
             "type": "Feature",
             "properties": {
-                "marker-color": "#00FF00",
-                "marker-size": "small",
-                "marker-symbol": "circle",
-                "name": f"Customer {i}",
+                "marker-color": "#FF0000",
+                "marker-size": "large",
+                "marker-symbol": "warehouse",
+                "name": f"Depot {cluster_id}",
             },
-            "geometry": {
-                "type": "Point",
-                "coordinates": locations_lon_lat[i].tolist()
+            "geometry": {"type": "Point", "coordinates": locations_lon_lat[0].tolist()},
+        }
+    )
+
+    for i in range(1, len(data["distance_matrix"])):
+        features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "marker-color": "#00FF00",
+                    "marker-size": "small",
+                    "marker-symbol": "circle",
+                    "name": f"Customer {i}",
+                },
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": locations_lon_lat[i].tolist(),
+                },
             }
-        })
-    
-    colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", 
-              "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
-    
+        )
+
+    colors = [
+        "#1f77b4",
+        "#ff7f0e",
+        "#2ca02c",
+        "#d62728",
+        "#9467bd",
+        "#8c564b",
+        "#e377c2",
+        "#7f7f7f",
+        "#bcbd22",
+        "#17becf",
+    ]
+
     for vehicle_id in range(data["num_vehicles"]):
         index = routing.Start(vehicle_id)
         route = []
-        
+
         while not routing.IsEnd(index):
             node_index = manager.IndexToNode(index)
             if node_index < len(locations):
@@ -111,34 +129,32 @@ def create_geojson(data, manager, routing, solution):
         if node_index < len(locations):
             route.append(locations_lon_lat[node_index].tolist())
 
-        features.append({
-            "type": "Feature",
-            "properties": {
-                "stroke": colors[cluster_id - 1],
-                "stroke-width": 2,
-                "stroke-opacity": 1,
-                "vehicle": vehicle_id,
-                "type": "route"
-            },
-            "geometry": {
-                "type": "LineString",
-                "coordinates": route
+        features.append(
+            {
+                "type": "Feature",
+                "properties": {
+                    "stroke": colors[cluster_id - 1],
+                    "stroke-width": 2,
+                    "stroke-opacity": 1,
+                    "vehicle": vehicle_id,
+                    "type": "route",
+                },
+                "geometry": {"type": "LineString", "coordinates": route},
             }
-        })
-    
-    geojson = {
-        "type": "FeatureCollection",
-        "features": features
-    }
-    
+        )
+
+    geojson = {"type": "FeatureCollection", "features": features}
+
     return geojson
+
 
 def save_geojson(geojson, filename=f"geojson/cluster{cluster_id:02d}.geojson"):
     with open(filename, "w") as f:
         json.dump(geojson, f, indent=2)
     print(f"✅GeoJSON saved to {filename}")
 
-def main():
+
+def main(limit_seconds):
     """Solve the CVRP problem and save GeoJSON."""
     data = create_data_model()
 
@@ -189,5 +205,25 @@ def main():
     else:
         print("❌No solution found.")
 
+
+def print_graph():
+    plt.figure(figsize=(8, 5))
+    plt.plot(results_limit_seconds, results_total_distance, marker="o")
+    plt.title("Total Distance vs Limit Seconds")
+    plt.xlabel("Limit Seconds(s)")
+    plt.ylabel("Total Distance(km)")
+    plt.grid(True)
+    plt.tight_layout()
+
+    plt.savefig(f"graph/limitSeconds/cluster{cluster_id:02d}.png")
+    plt.show()
+    plt.close()
+
+
 if __name__ == "__main__":
-    main()
+    for t in range(1, 11):
+        results_limit_seconds.append(t)
+        main(limit_seconds=t)
+
+    print(results_limit_seconds, results_total_distance)
+    print_graph()
