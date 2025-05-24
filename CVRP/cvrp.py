@@ -124,7 +124,7 @@ def create_geojson(data, manager, routing, solution, locations_lon_lat, cluster_
 
 def save_geojson(geojson, cluster_id):
     """GeoJSONを保存"""
-    filename = f"../geojson/cluster{cluster_id:02d}.geojson"
+    filename = f"geojson/cluster{cluster_id:02d}.geojson"
     with open(filename, "w") as f:
         json.dump(geojson, f, indent=2)
     print(f"✅GeoJSON saved to {filename}")
@@ -135,8 +135,8 @@ def main(cluster_id):
     
     try:
         # データ読み込み
-        df_center = pd.read_csv("../output/centers.csv")
-        df = pd.read_csv(f"../output/cluster{cluster_id:02d}.csv")
+        df_center = pd.read_csv("output/centers.csv")
+        df = pd.read_csv(f"output/cluster{cluster_id:02d}.csv")
         
         # 座標データ準備 (x,y座標系)
         center_xy = df_center[['x', 'y']].iloc[cluster_id - 1].values
