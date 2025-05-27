@@ -3,6 +3,9 @@
 合理性のある理由で営業所の位置を計画する。
 - 世帯をRでクラスター分析
 - 巡回セールスマン問題としてORtoolsで局所最適化(最適解ではない)
+- <a href="https://www.docswell.com/s/bmi921/KWW7ND-logistics-cluster-cvrp/1" target="_blank">
+    ドクセルの発表資料
+  </a>
 
 
 <div align="center">
@@ -50,6 +53,7 @@ logistics-cluster-cvrp/
 ├── 📜 LICENSE
 └── 📜 README.md      # このファイル
 ```
+
 
 
 <div align="center">
